@@ -38,6 +38,73 @@ var game = {
         game.player.x = display.canvas.width / 2;
         game.player.y = display.canvas.height - game.player.height;
     },
+
+    resolveCollisions: function(axis) {
+        
+        var player = game.player;
+        var tileSize = game.tileSize;
+
+        // Coordenadas de los bloques que ocupa el jugador
+        var left = Math.floor(player.x / tileSize);
+        var right = Math.floor((player.x + player.width - 0.001) / tileSize);
+
+        var top = Math.floor(player.y / tileSize);
+        var bottom = Math.floor((player.y + player.height - 0.001) / tileSize);
+        
+        // Recorrer los bloques cercanos al jugador
+
+        for (var row = top; row <= bottom; row++) {
+
+            for (var col = left; col <= right; col++) {
+
+                // Comprobar que el bloque existe y es sólido
+
+                if (
+                    game.tileMap[row] &&
+                    game.tileMap[row][col] === '1'
+                ) {
+
+                    // Colisión horizontal
+                    if (axis === 'x') {
+
+                        if (player.velocityX > 0) {
+
+                            // Colisión por la derecha
+                            player.x = col * tileSize - player.width;
+
+                        } else if (player.velocityX < 0) {
+
+                            // Colisión por la izquierda
+                            player.x = (col + 1) * tileSize;
+
+                        }
+
+                        player.velocityX = 0;
+                    }
+                    
+                    // Colisión vertical
+                    if (axis === 'y') {
+
+                        if (player.velocityY > 0) {
+
+                            // El jugador aterriza sobre el bloque
+                            player.y = row * tileSize - player.height;
+
+                            player.grounded = true;
+
+                        } else if (player.velocityY < 0) {
+
+                            // El jugador golpea el bloque desde abajo
+                            player.y = (row + 1) * tileSize;
+
+                        }
+
+                        player.velocityY = 0;
+                    }
+                }
+            }
+        }
+    },
     
     update: function() {
         var player = game.player;
@@ -56,6 +123,7 @@ var game = {
         }
 
         player.x += player.velocityX;
+        game.resolveCollisions('x');
 
         if (player.x < 0) {
             player.x = 0;
@@ -77,11 +145,17 @@ var game = {
         player.velocityY += game.gravity;
         player.y += player.velocityY;
         
-        if (player.y + player.height >= canvas.height) {
-            player.y = canvas.height - player.height;
+        // Reiniciar el estado antes de comprobar el aterrizaje
+        player.grounded = false;
+
+        game.resolveCollisions('y');
+
+        if (player.y < 0) {
+            player.y = 0;
             player.velocityY = 0;
-            player.grounded = true;
         }
+
+
 
     }
 };

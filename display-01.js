@@ -10,6 +10,9 @@ var display = {
     display.canvas.height = 480;
 
     display.context = display.canvas.getContext('2d');
+
+    display.spriteSheet = new Image();
+    display.spriteSheet.src = 'blob_orange_spritesheet_32x32.png';
   },
 
   draw: function(game) {
@@ -45,8 +48,69 @@ var display = {
         }
     }
 
+    var player = game.player;
 
-    context.fillStyle = 'red';
-    context.fillRect(game.player.x, game.player.y, game.player.width, game.player.height);
+    var frameWidth = 32;
+    var frameHeight = 32;
+
+    // Coordenadas dentro del sprite sheet
+    var sourceX = player.frame * frameWidth;
+    var sourceY = player.animationRow * frameHeight;
+
+    if (
+      display.spriteSheet &&
+      display.spriteSheet.complete &&
+      display.spriteSheet.naturalWidth > 0
+    ) {
+      context.save();
+
+      // Voltear el personaje si mira hacia la izquierda
+      if (player.facing === -1) {
+
+        context.translate(
+          player.x + player.width,
+          player.y
+        );
+
+        context.scale(-1, 1);
+
+        context.drawImage(
+          display.spriteSheet,
+          sourceX, sourceY,
+          frameWidth, frameHeight,
+          0, 0,
+          player.width, player.height
+        );
+
+      } else {
+
+        context.drawImage(
+          display.spriteSheet,
+          sourceX, sourceY,
+          frameWidth, frameHeight,
+          player.x, player.y,
+          player.width, player.height
+        );
+      }
+
+      context.restore();
+
+    } else {
+
+      // Personaje provisional mientras carga la imagen
+      context.fillStyle = '#ff9800';
+
+      context.beginPath();
+
+      context.arc(
+        player.x + player.width / 2,
+        player.y + player.height / 2,
+        player.width / 2 - 2,
+        0,
+        Math.PI * 2
+      );
+
+      context.fill();
+    }
   }
 };

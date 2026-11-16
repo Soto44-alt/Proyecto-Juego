@@ -31,12 +31,65 @@ var game = {
         velocityX: 0,
         velocityY: 0,
         jumpStrength: -10,
-        grounded: false
+        grounded: false,
+
+        // VARIABLES DE ANIMACIÓN
+        animationRow: 0,
+        frame: 0,
+        frameTimer: 0,
+        frameDelay: 8,
+
+        // Dirección: 1 derecha, -1 izquierda
+        facing: 1
     },
+    
+    // FOTOGRAMAS DE CADA ANIMACIÓN
+    // 0 = Idle
+    // 1 = Run
+    // 2 = Jump
+    // 3 = Fall
+    animationFrames: [4, 6, 5, 5],
     
     init: function() {
         game.player.x = display.canvas.width / 2;
         game.player.y = display.canvas.height - game.player.height;
+    },
+    
+    // MOVIMIENTO POR PEQUEÑOS PASOS PARA EVITAR TUNNELING
+    moveWithCollisions: function(axis, distance) {
+        
+        var player = game.player;
+        
+        // Dividir el desplazamiento en pasos de máximo 8 píxeles
+        
+        var steps = Math.ceil(Math.abs(distance) / 8);
+        
+        if (steps === 0) return;
+        
+        var step = distance / steps;
+        
+        for (var i = 0; i < steps; i++) {
+            // Mover horizontalmente
+            if (axis === 'x') {
+                player.x += step;
+            }
+            
+            // Mover verticalmente
+            if (axis === 'y') {
+                player.y += step;
+            }
+            
+            // Comprobar colisiones después de cada paso
+            game.resolveCollisions(axis);
+            
+            // Si hubo colisión, detener el desplazamiento
+            if (
+                (axis === 'x' && player.velocityX === 0) ||
+                (axis === 'y' && player.velocityY === 0)
+            ) {
+                break;
+            }
+        }
     },
 
     resolveCollisions: function(axis) {
@@ -105,6 +158,51 @@ var game = {
             }
         }
     },
+
+    // 1. CONTROLAR LAS ANIMACIONES
+    updateAnimation: function() {
+
+        var player = game.player;
+        var nextRow;
+
+        // Seleccionar animación según el estado del jugador
+        if (!player.grounded) {
+
+            if (player.velocityY < 0) {
+                nextRow = 2; // JUMP
+            } else {
+                nextRow = 3; // FALL
+            }
+
+        } else if (player.velocityX !== 0) {
+
+            nextRow = 1; // RUN
+
+        } else {
+
+            nextRow = 0; // IDLE
+        }
+
+        // Reiniciar fotogramas cuando cambia la animación
+        if (nextRow !== player.animationRow) {
+
+            player.animationRow = nextRow;
+            player.frame = 0;
+            player.frameTimer = 0;
+        }
+
+        // Controlar velocidad de reproducción
+        player.frameTimer++;
+
+        if (player.frameTimer >= player.frameDelay) {
+
+            player.frameTimer = 0;
+
+            player.frame =
+                (player.frame + 1) %
+                game.animationFrames[player.animationRow];
+        }
+    },
     
     update: function() {
         var player = game.player;
@@ -116,14 +214,15 @@ var game = {
 
         if (controller.keys['ArrowRight']) {
             player.velocityX = player.speed;
+            player.facing = 1;
         }
         
         if (controller.keys['ArrowLeft']) {
             player.velocityX = -player.speed;
+            player.facing = -1;
         }
 
-        player.x += player.velocityX;
-        game.resolveCollisions('x');
+        game.moveWithCollisions('x', player.velocityX);
 
         if (player.x < 0) {
             player.x = 0;
@@ -143,19 +242,19 @@ var game = {
         // Gravedad
         
         player.velocityY += game.gravity;
-        player.y += player.velocityY;
         
         // Reiniciar el estado antes de comprobar el aterrizaje
         player.grounded = false;
 
-        game.resolveCollisions('y');
+        game.moveWithCollisions('y', player.velocityY);
 
         if (player.y < 0) {
             player.y = 0;
             player.velocityY = 0;
         }
 
-
+        // ACTUALIZAR ANIMACIÓN
+        game.updateAnimation();
 
     }
 };

@@ -25,41 +25,185 @@ var display = {
 
     for (var row = 0; row < game.tileMap.length; row++) {
         for (var col = 0; col < game.tileMap[row].length; col++) {
-            
-            if (game.tileMap[row][col] === '1') {
+                     
+            var tile = game.tileMap[row][col];        
+            var x = col * tileSize;        
+            var y = row * tileSize;
 
-                context.fillStyle = '#558b2f';
-                context.fillRect(col * tileSize, row * tileSize, tileSize, tileSize);
-                context.strokeStyle = '#33691e';
-                context.strokeRect(col * tileSize, row * tileSize, tileSize, tileSize);
+            if (tile === '1') {
+              
+              context.fillStyle = '#558b2f';               
+              context.fillRect(x, y, tileSize, tileSize);               
+              context.strokeStyle = '#33691e';                
+              context.strokeRect(x, y, tileSize, tileSize);
 
             }
 
-            if (game.tileMap[row][col] === 'E') {
-    
-                context.fillStyle = '#ffca28';
-                context.fillRect(col * tileSize + 4, row * tileSize + 4, tileSize - 8, tileSize - 4);
-                context.fillStyle = '#5d4037';
-                context.font = 'bold 20px Arial';    
-                context.textAlign = 'center';
-                context.fillText('E', col * tileSize + tileSize / 2, row * tileSize + 25);
+            // Objeto coleccionable (C).
+            if (tile === 'C') {
+              
+              context.save();
 
+              // Centro de la casilla.    
+              context.translate(x + tileSize / 2, y + tileSize / 2);
+    
+              // Sombra de la moneda.    
+              context.fillStyle = '#9a6200';    
+              context.beginPath();    
+              context.arc(1, 1, 10, 0, Math.PI * 2);    
+              context.fill();
+    
+              // Cuerpo dorado.    
+              context.fillStyle = '#ffc107';    
+              context.beginPath();    
+              context.arc(0, 0, 10, 0, Math.PI * 2);    
+              context.fill();
+   
+              // Borde exterior.    
+              context.strokeStyle = '#e69500';    
+              context.lineWidth = 2;    
+              context.stroke();
+    
+              // Círculo interior.    
+              context.strokeStyle = '#fff176';   
+              context.lineWidth = 2;   
+              context.beginPath();   
+              context.arc(0, 0, 6, 0, Math.PI * 2);    
+              context.stroke();
+   
+              // Símbolo de la moneda.   
+              context.fillStyle = '#b77900';  
+              context.font = 'bold 11px Arial';    
+              context.textAlign = 'center';    
+              context.textBaseline = 'middle';   
+              context.fillText('$', 0, 0);
+   
+              context.restore();
+
+            }
+
+            
+
+            if (game.tileMap[row][col] === 'E') {
+                    
+              context.fillStyle = '#ffca28';                
+              context.fillRect(x + 4, y + 4, tileSize - 8, tileSize - 4);                
+              context.fillStyle = '#5d4037';                
+              context.font = 'bold 20px Arial';                   
+              context.textAlign = 'center';                
+              context.fillText('E', x + tileSize / 2, y + 25);
+
+            }
+
+            // Nivel
+            if (!game.completed && !game.gameOver) {
+
+              context.save();
+    
+              context.fillStyle = '#ffffff';
+              context.font = 'bold 18px Arial';
+              context.textAlign = 'left';
+              context.shadowColor = '#000000';
+              context.shadowBlur = 3;
+
+    
+              // Nombre del nivel.
+              context.fillText(game.levels[game.currentLevel].name, 12, 24);
+
+              // Monedas.
+              context.textAlign = 'right';
+
+              context.fillText('Monedas: ' + game.itemsCollected + ' / ' + game.totalItems,
+                display.canvas.width - 12, 24
+              );
+
+              // Vidas.
+              context.textAlign = 'left';
+
+              context.fillText('Vidas: ' + game.lives, 12, 48);
+              context.restore();
+
+            }
+
+            context.save();
+
+            // Pantalla de derrota
+            if (game.gameOver) {
+
+              context.fillStyle = 'rgba(0, 0, 0, 0.78)';
+
+              context.fillRect(0, 0, display.canvas.width, display.canvas.height);
+
+              context.fillStyle = '#ffffff';  
+              context.textAlign = 'center';
+              context.font = 'bold 38px Arial';
+
+              context.fillText('¡Juego terminado!', display.canvas.width / 2, 220);
+
+              context.font = '20px Arial';
+
+              context.fillText('Te has quedado sin vidas', display.canvas.width / 2, 260);
+              
             }
 
             // Mensaje de finalización
             if (game.completed) {
-   
-                context.fillStyle = 'rgba(0, 0, 0, 0.7)';    
-                context.fillRect(0, 0, display.canvas.width, display.canvas.height);
-    
-                context.fillStyle = 'white';    
-                context.font = 'bold 32px Arial';    
-                context.textAlign = 'center';
-    
-                context.fillText('¡Juego completado!', display.canvas.width / 2, display.canvas.height / 2);
+                
+              context.fillStyle = 'rgba(0, 0, 0, 0.7)';                    
+              context.fillRect(0, 0, display.canvas.width, display.canvas.height);
+                 
+              context.fillStyle = 'white';                    
+              context.font = 'bold 32px Arial';                    
+              context.textAlign = 'center';
+                   
+              context.fillText('¡Juego completado!', display.canvas.width / 2, display.canvas.height / 2);
 
             }
         }
+    }
+
+    // Enemigos
+    for (var i = 0; i < game.enemies.length; i++) {
+
+      var enemy = game.enemies[i];
+
+      context.save();
+
+      // Cuerpo del enemigo.
+      context.fillStyle = '#c62828'; 
+      context.beginPath();
+
+      context.arc(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2 + 2,
+        enemy.width / 2, Math.PI, 0
+      );
+
+      context.lineTo(enemy.x + enemy.width, enemy.y + enemy.height);
+
+      context.lineTo(enemy.x, enemy.y + enemy.height);
+
+      context.closePath();
+      context.fill();
+
+      // Ojos blancos.
+      context.fillStyle = '#ffffff';
+      context.beginPath();
+
+      context.arc(enemy.x + 9, enemy.y + 11, 4, 0, Math.PI * 2);
+      context.arc(enemy.x + 19, enemy.y + 11, 4, 0, Math.PI * 2);
+
+      context.fill();
+
+      // Pupilas.
+      context.fillStyle = '#212121';
+      context.beginPath();
+
+      context.arc(enemy.x + 10, enemy.y + 12, 2, 0, Math.PI * 2);
+      context.arc(enemy.x + 18, enemy.y + 12, 2, 0, Math.PI * 2);
+
+      context.fill();
+
+      context.restore();
+
     }
 
     var player = game.player;
@@ -70,12 +214,15 @@ var display = {
     // Coordenadas dentro del sprite sheet
     var sourceX = player.frame * frameWidth;
     var sourceY = player.animationRow * frameHeight;
+    var showPlayer = game.invulnerabilityTimer === 0 ||
+                 Math.floor(game.invulnerabilityTimer / 6) % 2 === 0;
 
     if (
       display.spriteSheet &&
       display.spriteSheet.complete &&
       display.spriteSheet.naturalWidth > 0
     ) {
+
       context.save();
 
       // Voltear el personaje si mira hacia la izquierda
@@ -106,22 +253,20 @@ var display = {
 
       context.restore();
 
-    } else {
+    } else if (showPlayer) {
 
       // Personaje provisional mientras carga la imagen
       context.fillStyle = '#ff9800';
 
       context.beginPath();
 
-      context.arc(
-        player.x + player.width / 2,
-        player.y + player.height / 2,
-        player.width / 2 - 2,
-        0,
-        Math.PI * 2
+      context.arc(player.x + player.width / 2, player.y + player.height / 2,
+        player.width / 2 - 2, 0, Math.PI * 2
       );
 
       context.fill();
     }
+
+
   }
 };

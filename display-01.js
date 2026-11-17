@@ -27,23 +27,37 @@ var display = {
         for (var col = 0; col < game.tileMap[row].length; col++) {
             
             if (game.tileMap[row][col] === '1') {
+
                 context.fillStyle = '#558b2f';
-                
-                context.fillRect(
-                    col * tileSize,
-                    row * tileSize,
-                    tileSize,
-                    tileSize
-                );
-                
+                context.fillRect(col * tileSize, row * tileSize, tileSize, tileSize);
                 context.strokeStyle = '#33691e';
-                
-                context.strokeRect(
-                    col * tileSize,
-                    row * tileSize,
-                    tileSize,
-                    tileSize
-                );
+                context.strokeRect(col * tileSize, row * tileSize, tileSize, tileSize);
+
+            }
+
+            if (game.tileMap[row][col] === 'E') {
+    
+                context.fillStyle = '#ffca28';
+                context.fillRect(col * tileSize + 4, row * tileSize + 4, tileSize - 8, tileSize - 4);
+                context.fillStyle = '#5d4037';
+                context.font = 'bold 20px Arial';    
+                context.textAlign = 'center';
+                context.fillText('E', col * tileSize + tileSize / 2, row * tileSize + 25);
+
+            }
+
+            // Mensaje de finalización
+            if (game.completed) {
+   
+                context.fillStyle = 'rgba(0, 0, 0, 0.7)';    
+                context.fillRect(0, 0, display.canvas.width, display.canvas.height);
+    
+                context.fillStyle = 'white';    
+                context.font = 'bold 32px Arial';    
+                context.textAlign = 'center';
+    
+                context.fillText('¡Juego completado!', display.canvas.width / 2, display.canvas.height / 2);
+
             }
         }
     }
@@ -67,10 +81,7 @@ var display = {
       // Voltear el personaje si mira hacia la izquierda
       if (player.facing === -1) {
 
-        context.translate(
-          player.x + player.width,
-          player.y
-        );
+        context.translate(player.x + player.width, player.y);
 
         context.scale(-1, 1);
 

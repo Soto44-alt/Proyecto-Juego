@@ -4,24 +4,53 @@ var game = {
 
     tileSize: 32,
         
-    tileMap: [
-        "00000000000000000000",
-        "00000000000000000000",
-        "00000000000000000000",
-        "00000000000000000000",
-        "00000000000000000000",
-        "00000000000000000000",
-        "00000000000000000000",
-        "00000000000000000000",
-        "00000000001110000000",
-        "00000000111000000000",
-        "00000000000000011100",
-        "00000111000000000000",
-        "00000000000011100000",
-        "00000000000000000000",
-        "11111111111111111111"
+    levels: [
+        {
+            name: "Nivel 1",
+            map: [            
+                "00000000000000000000",            
+                "00000000000000000000",            
+                "00000000000000000000",            
+                "00000000000000000000",            
+                "00000000000000000000",            
+                "00000000000000000000",            
+                "00000000000000000000",            
+                "00000000000000000000",            
+                "00000000001110000000",           
+                "00000000111000000000",           
+                "00000000000000011100",            
+                "00000111000000000000",           
+                "00000000000011100000",            
+                "000000000000000000E0",            
+                "11111111111111111111"
+            ]
+        },
+        {
+            name: "Nivel 2",
+            map: [
+                "00000000000000000000",
+                "00000000000000000000",
+                "00000000000000000000",            
+                "00000000000000000000",            
+                "00000000000000000000",            
+                "00000000000000000000",            
+                "00000000000000000000",            
+                "00000000000000000000",            
+                "00000000000000000000",            
+                "00000000000000000000",            
+                "00000000001100000000",            
+                "00000000000000000000",            
+                "00000111000001110000",            
+                "000000000000000000E0",            
+                "11111111111111111111"
+            ]
+        }
     ],
-    
+
+    currentLevel: 0,
+    completed: false,
+    tileMap: [],
+
     player: {
         x: 0,
         y: 0,
@@ -33,7 +62,7 @@ var game = {
         jumpStrength: -10,
         grounded: false,
 
-        // VARIABLES DE ANIMACIÓN
+        // Variables de animación
         animationRow: 0,
         frame: 0,
         frameTimer: 0,
@@ -43,19 +72,70 @@ var game = {
         facing: 1
     },
     
-    // FOTOGRAMAS DE CADA ANIMACIÓN
-    // 0 = Idle
-    // 1 = Run
-    // 2 = Jump
-    // 3 = Fall
+    // Fotogramas por animación
+    // 0 = Reposo
+    // 1 = Correr
+    // 2 = Salto
+    // 3 = Caída
     animationFrames: [4, 6, 5, 5],
     
     init: function() {
-        game.player.x = display.canvas.width / 2;
-        game.player.y = display.canvas.height - game.player.height;
+        game.loadLevel(0);
     },
+
+    loadLevel: function(levelIndex) {
+
+        if (levelIndex >= game.levels.length) {
+            game.completed = true;
+            return;
+        }
+
+        game.currentLevel = levelIndex;
+
+        // Copiar el mapa del nivel seleccionado
+        game.tileMap = game.levels[levelIndex].map.slice();
+
+        // Reiniciar la posición del jugador
+        game.player.x = 32;
+        game.player.y = 0;
     
-    // MOVIMIENTO POR PEQUEÑOS PASOS PARA EVITAR TUNNELING
+        game.player.velocityX = 0;    
+        game.player.velocityY = 0;
+    
+        game.player.grounded = false;
+    
+        // Reiniciar animación
+        game.player.animationRow = 0;
+        game.player.frame = 0;    
+        game.player.frameTimer = 0;
+
+        game.player.facing = 1;
+    },
+
+
+    advanceLevel: function() {
+
+        game.loadLevel(game.currentLevel + 1);
+
+    },
+
+    checkLevelExit: function() {
+
+        var player = game.player;
+    
+        // La salida está ubicada en la columna 18    
+        var exitX = 18 * game.tileSize;
+    
+        if (        
+            player.grounded &&        
+            player.x + player.width > exitX
+        ) {
+            game.advanceLevel();
+        }
+    },
+
+    
+    // Tunneling
     moveWithCollisions: function(axis, distance) {
         
         var player = game.player;
@@ -159,7 +239,7 @@ var game = {
         }
     },
 
-    // 1. CONTROLAR LAS ANIMACIONES
+    // 1. Controlar las animaciones
     updateAnimation: function() {
 
         var player = game.player;
@@ -169,18 +249,18 @@ var game = {
         if (!player.grounded) {
 
             if (player.velocityY < 0) {
-                nextRow = 2; // JUMP
+                nextRow = 2; // Salto
             } else {
-                nextRow = 3; // FALL
+                nextRow = 3; // Caída
             }
 
         } else if (player.velocityX !== 0) {
 
-            nextRow = 1; // RUN
+            nextRow = 1; // Correr
 
         } else {
 
-            nextRow = 0; // IDLE
+            nextRow = 0; // Reposo
         }
 
         // Reiniciar fotogramas cuando cambia la animación
@@ -198,15 +278,18 @@ var game = {
 
             player.frameTimer = 0;
 
-            player.frame =
-                (player.frame + 1) %
-                game.animationFrames[player.animationRow];
+            player.frame = (player.frame + 1) % game.animationFrames[player.animationRow];
         }
     },
     
     update: function() {
         var player = game.player;
         var canvas = display.canvas;
+
+        // No actualizar el juego si se completaron los niveles
+        if (game.completed) {
+            return;
+        }
 
         // Movimiento horinzontal
 
@@ -252,6 +335,9 @@ var game = {
             player.y = 0;
             player.velocityY = 0;
         }
+
+        // Comprobar si el jugador llegó a la salida
+        game.checkLevelExit();
 
         // ACTUALIZAR ANIMACIÓN
         game.updateAnimation();

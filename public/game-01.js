@@ -1,67 +1,99 @@
+// Función que construye mapas
+function buildLevelMap(platforms, coins) {
+    var rows = Array.from({ length: 15 }, function() {
+        return Array(40).fill('0');
+    });
+
+    platforms.forEach(function(platform) {
+        for (var col = platform[1]; col <= platform[2]; col++) {
+            rows[platform[0]][col] = '1';
+        }
+    });
+
+    coins.forEach(function(coin) {
+        rows[coin[0]][coin[1]] = 'C';
+    });
+
+    rows[13][38] = 'E';
+    rows[14].fill('1');
+    return rows.map(function(row) { return row.join(''); });
+}
+
 var game = {
 
     gravity: 0.5,
-
     tileSize: 32,
         
     levels: [
         {
             name: "Nivel 1 - Pradera",
+            textureRow: 0,
+            textureStart: 0,
+            textureCount: 8,
+            backgroundColor: '#81d4fa',
             map: [            
-                "00000000000000000000",            
-                "00000000000000000000",            
-                "00000000000000000000",            
-                "00000000000000000000",            
-                "0000000000000000C000",            
-                "00000000000000000000",            
-                "000000000C0000011000",            
-                "00000000000000000000",            
-                "00000000001110000000",           
-                "0000000011100000C000",           
-                "00000000000000011100",            
-                "00000111000000000000",           
-                "00000000000011100000",            
-                "0000C0000C00000000E0",            
-                "11111111111111111111"
+                "0000000000000000000000000000000000000000",
+                "0000000000000000000000000000000000000000",
+                "0000000000000000000000000000000000000000",
+                "0000000000000000000000000000000000000000",
+                "0000000000000000000000000000000000000000",
+                "0000000000000000000000000000000000000000",
+                "00000000000000000000000000000CC000000000",
+                "0000000000000000000000000000000000000000",
+                "0001111000000000111100000001111100111100",
+                "00000000000C000000000C000000000000000000",
+                "0000000000111100000011110000000011110000",
+                "0000000C000000000C0000000000000000000000",
+                "0000011111000001111100000011111000000000",
+                "00C00000000000000000000000000000000000E0",
+                "1111111111111111111111111111111111111111"
             ],
 
             enemies: [
-                { x: 190, minX: 150, maxX: 350, speed: 1.7 },
-                { x: 420, minX: 380, maxX: 530, speed: 1.8 }
+                { x: 190, y: 356, minX: 160, maxX: 320, speed: 1.7 },
+                { x: 900, minX: 832, maxX: 1088, speed: 1.8 }
             ],
 
-            shield: {x: 320, y: 400, width: 24, height: 24}
+            shield: {x: 330, y: 400, width: 24, height: 24}
 
         },
         {
             name: "Nivel 2 - Pradera II",
+            textureRow: 1,
+            textureStart: 0,
+            textureCount: 8,
+            backgroundColor: '#8bd2ee',
             map: [
-                "00000000000000000000",
-                "00000000000000000000",
-                "00000000000000000000",            
-                "00000000000000000000",            
-                "00000000000000000000",            
-                "00000000000000000000",            
-                "00000000000000000000",            
-                "00000000000C00000000",            
-                "00000000000000000000",            
-                "00000000000000C00000",            
-                "000000C0001100000000",            
-                "00000000000000000000",            
-                "00000111000001110000",            
-                "0000000000C0000000E0",            
-                "11111111111111111111"
+                "0000000000000000000000000000000000000000",
+                "0000000000000000000000000000000000000000",
+                "0000000000000000000000000000000000000000",
+                "0000000000000000000000000000000000000000",
+                "0000000000000000000000000000000000000000",
+                "0000000000000000000000000000000000000000",
+                "0000000000000000000000000000000CC0000000",
+                "000000000C0000000000C0000000000000000000",
+                "0000000011110000000111110000001111000C00",
+                "0000000000000000000000000000000000000000",
+                "00111100000011111000C0001111100000011100",
+                "0000000CC0000000000000000000000000000000",
+                "0000001111100000001111100000001111100000",
+                "00C00000000000000000000000000000000000E0",
+                "1111111111111111111111111111111111111111"
             ],
 
             enemies: [
-                { x: 220, minX: 160, maxX: 330, speed: 1.8 }, 
-                { x: 440, minX: 370, maxX: 540, speed: 2 }
+                { x: 600, y: 356, minX: 576, maxX: 736, speed: 1.8 },
+                { x: 800, y: 292, minX: 768, maxX: 928, speed: 2 }
             ],
 
-            shield: {x: 320, y: 400, width: 24, height: 24}
+            shield: {x: 544, y: 400, width: 24, height: 24}
         },
         {
             name: "Nivel 3 - Bosque",
+            textureRow: 2,
+            textureStart: 0,
+            textureCount: 8,
+            backgroundColor: '#83c7a7',
             map: [
     
                 "0000000000000000000000000000000000000000",    
@@ -69,28 +101,133 @@ var game = {
                 "0000000000000000000000000000000000000000",   
                 "0000000000000000000000000000000000000000",    
                 "0000000000000000000000000000000000000000",    
-                "0000000000000000000000000000000000000000",    
-                "0000000000000000000000000000000000000000",    
-                "000C0000000C0000000000000C00000000C00000",    
-                "0011100001110000111000001111000001111000",    
-                "000000000000000000000000000000C000000000",    
-                "00000C00111000C0000000000000011110000000",    
-                "00000000000000000000000C000000000000C000",    
-                "0000111000011100000000111100000000011110",    
-                "000C000000C0000C000000000000C00000C000E0",    
+                "0000000000000000000000000000000000000000",
+                "0000000000000000000000000000111110000000",
+                "000000C000000000C00000000C000000000C0000",
+                "0000011110000001111000001111100000111100",
+                "0000000000C000000000C0000000000C00000000",
+                "0111100001111100000111110000001111000000",
+                "00000C000000000C00000000000C0000000C0000",
+                "0000111110000011111000000011111000111100",
+                "0C0000000000C0000000000C00000000000000E0",
                 "1111111111111111111111111111111111111111"
             ],
 
             enemies: [
-                { x: 120, minX: 90, maxX: 220, speed: 1.8 },   
-                { x: 300, minX: 260, maxX: 410, speed: 2 },   
-                { x: 480, minX: 450, maxX: 610, speed: 2.2 }
+                { x: 480, y: 356, minX: 448, maxX: 608, speed: 1.8 },
+                { x: 640, y: 292, minX: 608, maxX: 768, speed: 2 },
+                { x: 930, minX: 896, maxX: 1088, speed: 2.2 }
             ],
 
+            shield: { x: 320, y: 400, width: 24, height: 24 }
+        },
+        {
+            name: "Nivel 4 - Montaña",
+            textureRow: 3, textureStart: 0, textureCount: 8,
+            backgroundColor: '#c9e4f4',
+            map: buildLevelMap(
+                [[12,4,8],[10,9,13],[8,14,18],[10,19,23],[12,24,28],[10,30,34],[8,35,38],[6,34,37]],
+                [[11,5],[11,25],[9,10],[9,20],[9,31],[7,15],[7,36]]
+            ),
+            enemies: [
+                { x: 160, y: 356, minX: 128, maxX: 288, speed: 1.9 },
+                { x: 480, y: 228, minX: 448, maxX: 608, speed: 2.1 },
+                { x: 928, minX: 896, maxX: 1120, speed: 2.2 }
+            ],
+            shield: { x: 320, y: 400, width: 24, height: 24 }
+        },
+        {
+            name: "Nivel 5 - Montes rocosos",
+            textureRow: 4, textureStart: 0, textureCount: 8,
+            backgroundColor: '#8995a5',
+            map: buildLevelMap(
+                [[12,3,7],[12,13,17],[12,23,27],[12,33,37],[10,7,11],[10,17,21],[10,27,31],[8,11,15],[8,21,25],[8,31,35]],
+                [[11,4],[11,14],[11,24],[11,34],[9,9],[9,19],[9,29]]
+            ),
+            enemies: [
+                { x: 448, y: 356, minX: 416, maxX: 576, speed: 2 },
+                { x: 896, y: 292, minX: 864, maxX: 1024, speed: 2.2 },
+                { x: 192, minX: 160, maxX: 320, speed: 2 }
+            ],
+            shield: { x: 320, y: 400, width: 24, height: 24 }
+        },
+        {
+            name: "Nivel 6 - Cielo",
+            textureRow: 5, textureStart: 0, textureCount: 8,
+            backgroundColor: '#72c7f2',
+            map: buildLevelMap(
+                [[12,2,6],[12,12,16],[12,22,26],[12,32,36],[10,7,11],[10,17,21],[10,27,31],[8,3,7],[8,13,17],[8,23,27],[8,33,37],[6,18,22]],
+                [[11,4],[11,14],[11,24],[11,34],[9,8],[9,18],[9,28]]
+            ),
+            enemies: [
+                { x: 736, y: 356, minX: 704, maxX: 864, speed: 2.1 },
+                { x: 576, y: 292, minX: 544, maxX: 704, speed: 2.2 },
+                { x: 1088, y: 228, minX: 1056, maxX: 1216, speed: 2.4 }
+            ],
+            shield: { x: 320, y: 400, width: 24, height: 24 }
+        },
+        {
+            name: "Nivel 7 - Templo ancestral",
+            textureRow: 6, textureStart: 0, textureCount: 8,
+            backgroundColor: '#756586',
+            map: buildLevelMap(
+                [[12,4,9],[12,17,22],[12,30,35],[10,8,13],[10,21,26],[10,34,38],[8,2,7],[8,15,20],[8,28,33],[6,34,38]],
+                [[11,6],[11,19],[11,32],[9,10],[9,23],[7,4],[7,17]]
+            ),
+            enemies: [
+                { x: 576, y: 356, minX: 544, maxX: 736, speed: 2.1 },
+                { x: 512, y: 228, minX: 480, maxX: 672, speed: 2.3 },
+                { x: 960, minX: 896, maxX: 1120, speed: 2.4 }
+            ],
+            shield: { x: 320, y: 400, width: 24, height: 24 }
+        },
+        {
+            name: "Nivel 8 - Cueva",
+            textureRow: 7, textureStart: 0, textureCount: 8,
+            backgroundColor: '#344052',
+            map: buildLevelMap(
+                [[12,2,6],[12,10,14],[12,18,22],[12,26,30],[12,34,37],[10,5,9],[10,14,18],[10,23,27],[10,31,35],[8,9,13],[8,18,22],[8,27,31],[6,19,23]],
+                [[11,4],[11,12],[11,20],[11,28],[11,35],[9,7],[9,16]]
+            ),
+            enemies: [
+                { x: 608, y: 356, minX: 576, maxX: 736, speed: 2.2 },
+                { x: 896, y: 228, minX: 864, maxX: 1024, speed: 2.5 }
+            ],
+            shield: { x: 320, y: 400, width: 24, height: 24 }
+        },
+        {
+            name: "Nivel 9 - Puerto pirata",
+            textureRow: 8, textureStart: 0, textureCount: 8,
+            backgroundColor: '#d4ad78',
+            map: buildLevelMap(
+                [[12,3,8],[12,15,20],[12,27,32],[10,8,13],[10,20,25],[10,32,37],[8,2,7],[8,14,19],[8,26,31],[8,34,38],[6,31,36]],
+                [[11,5],[11,17],[11,29],[9,10],[9,22],[9,34],[7,16]]
+            ),
+            enemies: [
+                { x: 512, y: 356, minX: 480, maxX: 672, speed: 2.3 },
+                { x: 1056, y: 292, minX: 1024, maxX: 1216, speed: 2.5 },
+                { x: 192, minX: 160, maxX: 320, speed: 2.2 }
+            ],
+            shield: { x: 320, y: 400, width: 24, height: 24 }
+        },
+        {
+            name: "Nivel 10 - Iceberg",
+            textureRow: 9, textureStart: 0, textureCount: 8,
+            backgroundColor: '#b9eaf5',
+            map: buildLevelMap(
+                [[12,3,7],[12,11,15],[12,19,23],[12,27,31],[12,35,38],[10,7,11],[10,15,19],[10,23,27],[10,31,35],[8,11,15],[8,19,23],[8,27,31],[8,35,38],[6,35,38]],
+                [[11,5],[11,13],[11,21],[11,29],[9,9],[9,25],[7,36]]
+            ),
+            enemies: [
+                { x: 640, y: 356, minX: 608, maxX: 768, speed: 2.4 },
+                { x: 1152, y: 228, minX: 1120, maxX: 1248, speed: 2.7 },
+                { x: 928, minX: 896, maxX: 1088, speed: 2.5 }
+            ],
             shield: { x: 320, y: 400, width: 24, height: 24 }
         }
     ],
 
+    // Estados del juego
     currentLevel: 0,
     gameMode: 'principal',
     completed: false,
@@ -100,18 +237,19 @@ var game = {
     
     // Contador global de objetos recolectados en todos los niveles.
     itemsCollected: 0,
-    totalItems: 23,
+    totalItems: 79,
+
     // Identificadores de monedas recogidas durante la campaña.
     collectedCoinIds: [],
 
     // Monedas recogidas temporalmente en el nivel actual.
     pendingCoinIds: [],
 
-    // Sistema de vidas
+    // Sistema de vidas e invencibilidad
     lives: 3,
     invulnerabilityTimer: 0,
 
-    // Enemigos
+    // Enemigos y escudo
     enemies: [],
     shield: null,
     shieldActive: false,
@@ -146,6 +284,7 @@ var game = {
     animationFrames: [4, 6, 5, 5],
     
     init: function() {
+
         game.itemsCollected = 0;  
         game.lives = 3;   
         game.invulnerabilityTimer = 0;   
@@ -154,8 +293,10 @@ var game = {
         game.transitionPending = false;
         game.transitionFailed = false;
         game.loadLevel(0);
+
     },
 
+    // Función de carga de nivel
     loadLevel: function(levelIndex) {
 
         if (levelIndex >= game.levels.length) {
@@ -188,6 +329,7 @@ var game = {
             for (var col = 0; col < originalMap[row].length; col++) {
         
                 if (originalMap[row][col] === 'C') {
+
                     game.currentLevelCoinIds.push('nivel' + (levelIndex + 1) + '_fila' + row + '_columna' + col);
         
                 }
@@ -227,6 +369,7 @@ var game = {
         game.player.facing = 1;
     },
 
+    // Función que devuelve al personaje al punto de partida
     resetPlayerPosition: function() {
    
         game.player.x = 32;    
@@ -243,10 +386,12 @@ var game = {
 
     },
 
-
+    // Función de progresión en niveles
     advanceLevel: function() {
+
         if (game.transitionPending || game.transitionFailed ||
             !window.gameSession || !gameSession.playerId) {
+                
             return;
         }
 
@@ -256,18 +401,23 @@ var game = {
 
         gameSession.completeLevel(completedLevel, game.lives, game.pendingCoinIds.slice())
             .then(async function(result) {
+
                 game.lives = result.lives;
                 game.itemsCollected = result.total_coins;
 
                 if (completedLevel < game.levels.length) {
+
                     await gameSession.startLevel(completedLevel + 1, mode);
+
                 }
 
                 game.loadLevel(game.currentLevel + 1);
                 game.transitionPending = false;
 
                 if (game.completed) {
+
                     gameSession.showEnd('¡Campaña completada! El progreso quedó guardado.');
+
                 }
             })
             .catch(function(error) {
@@ -279,7 +429,7 @@ var game = {
 
     },
 
-    // Recolección de objetos
+    // Función de recolección de objetos
     checkItemCollection: function() {
     
         var player = game.player;
@@ -320,7 +470,7 @@ var game = {
         }
     },
 
-    // RECOGER EL ESCUDO PROTECTOR.
+    // Función de recolección del escudo
     checkShieldCollection: function() {
     
         if (!game.shield || game.shield.collected) {
@@ -337,11 +487,14 @@ var game = {
         player.y + player.height > shield.y;
 
         if (overlaps) {
+
             shield.collected = true;
             game.shieldActive = true;
+
         }
     },
 
+    // Función que verifica la culminación de un nivel
     checkLevelExit: function() {
 
         var player = game.player;
@@ -362,8 +515,10 @@ var game = {
                 player.y < exitY + tileSize &&
                 player.y + player.height > exitY;
           
-                if (overlaps && player.grounded) {           
+                if (overlaps && player.grounded) {
+
                     game.advanceLevel();
+
                 }
 
                 return;
@@ -371,7 +526,7 @@ var game = {
         }
     },
 
-    // Tunneling
+    // Función de Tunneling
     moveWithCollisions: function(axis, distance) {
         
         var player = game.player;
@@ -408,6 +563,7 @@ var game = {
         }
     },
 
+    // Función de detección de colisión estándar
     resolveCollisions: function(axis) {
         
         var player = game.player;
@@ -423,26 +579,20 @@ var game = {
         // Recorrer los bloques cercanos al jugador
 
         for (var row = top; row <= bottom; row++) {
-
             for (var col = left; col <= right; col++) {
 
                 // Comprobar que el bloque existe y es sólido
 
-                if (
-                    game.tileMap[row] &&
-                    game.tileMap[row][col] === '1'
-                ) {
+                if (game.tileMap[row] && game.tileMap[row][col] === '1') {
 
                     // Colisión horizontal
                     if (axis === 'x') {
 
                         if (player.velocityX > 0) {
-
                             // Colisión por la derecha
                             player.x = col * tileSize - player.width;
 
                         } else if (player.velocityX < 0) {
-
                             // Colisión por la izquierda
                             player.x = (col + 1) * tileSize;
 
@@ -455,14 +605,11 @@ var game = {
                     if (axis === 'y') {
 
                         if (player.velocityY > 0) {
-
                             // El jugador aterriza sobre el bloque
                             player.y = row * tileSize - player.height;
-
                             player.grounded = true;
 
                         } else if (player.velocityY < 0) {
-
                             // El jugador golpea el bloque desde abajo
                             player.y = (row + 1) * tileSize;
 
@@ -475,7 +622,7 @@ var game = {
         }
     },
 
-    // Mover enemigos
+    // Función que moviliza los enemigos
     updateEnemies: function() {
 
         for (var i = 0; i < game.enemies.length; i++) {
@@ -496,7 +643,7 @@ var game = {
         }
     },
 
-    // Detectar enemigos con colisión
+    // Función de detección de enemigos con colisión
     checkEnemyCollisions: function() {
 
         if (game.invulnerabilityTimer > 0 || game.gameOver) return;
@@ -519,7 +666,7 @@ var game = {
         }
     },
 
-    // Substracción de vidas
+    // Función de substracción de vidas
     takeDamage: function() {
    
         if (game.shieldActive) {
@@ -560,7 +707,7 @@ var game = {
 
     },
 
-    // 1. Controlar las animaciones
+    // Función de control de las animaciones
     updateAnimation: function() {
 
         var player = game.player;
@@ -576,11 +723,8 @@ var game = {
             }
 
         } else if (player.velocityX !== 0) {
-
             nextRow = 1; // Correr
-
         } else {
-
             nextRow = 0; // Reposo
         }
 
@@ -590,6 +734,7 @@ var game = {
             player.animationRow = nextRow;
             player.frame = 0;
             player.frameTimer = 0;
+
         }
 
         // Controlar velocidad de reproducción
@@ -598,20 +743,25 @@ var game = {
         if (player.frameTimer >= player.frameDelay) {
 
             player.frameTimer = 0;
-
             player.frame = (player.frame + 1) % game.animationFrames[player.animationRow];
+
         }
     },
     
+    // Función de actualización del juego
     update: function() {
 
         // No actualizar el juego si se completaron los niveles
         if (game.completed || game.gameOver || game.transitionPending) {
+
             return;
+
         }
 
         if (game.invulnerabilityTimer > 0) {
+
             game.invulnerabilityTimer--;
+
         }
 
         var player = game.player;
@@ -623,13 +773,17 @@ var game = {
         player.velocityX = 0;
 
         if (controller.keys['ArrowRight']) {
+
             player.velocityX = player.speed;
             player.facing = 1;
+
         }
         
         if (controller.keys['ArrowLeft']) {
+
             player.velocityX = -player.speed;
             player.facing = -1;
+
         }
 
         game.moveWithCollisions('x', player.velocityX);

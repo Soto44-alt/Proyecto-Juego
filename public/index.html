@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="user-scalable=no,width=device-width">
+    <link href="plat.css" rel="stylesheet" type="text/css">
+    <title>Juego</title>
+  </head>
+  <body>
+    <canvas></canvas>
+
+    <section id="player-menu" class="player-menu" aria-labelledby="menu-title">
+      <header class="menu-header">
+        <span class="brand-emblem" aria-hidden="true">◆</span>
+        <div>
+          <p class="eyebrow">AVENTURA DE PLATAFORMAS</p>
+          <h1 id="menu-title">Platformer</h1>
+        </div>
+      </header>
+      <p class="menu-intro">Tu siguiente aventura empieza aquí.</p>
+      <label class="field-label" for="player-select">PERFIL DE JUGADOR</label>
+      <select id="player-select"></select>
+      <div class="menu-actions">
+        <button id="continue-game" type="button">Continuar</button>
+        <button id="new-game" type="button">Nueva partida</button>
+      </div>
+      <button id="show-statistics" class="secondary-button" type="button" disabled>Consultar estadísticas</button>
+      <section id="statistics-panel" class="statistics-panel" aria-labelledby="statistics-title" hidden>
+        <div class="statistics-heading">
+          <h2 id="statistics-title">Estadísticas</h2>
+          <button id="close-statistics" class="icon-button" type="button" aria-label="Cerrar estadísticas">×</button>
+        </div>
+        <p id="statistics-player" class="statistics-player"></p>
+        <dl class="statistics-grid">
+          <div><dt>Partidas iniciadas</dt><dd id="stat-games">—</dd></div>
+          <div><dt>Niveles completados</dt><dd id="stat-levels">—</dd></div>
+          <div><dt>Monedas obtenidas</dt><dd id="stat-coins">—</dd></div>
+          <div><dt>Derrotas</dt><dd id="stat-defeats">—</dd></div>
+          <div><dt>Mejor nivel</dt><dd id="stat-best-level">—</dd></div>
+          <div><dt>Última actividad</dt><dd id="stat-last-activity">—</dd></div>
+        </dl>
+        <p id="statistics-message" role="status" aria-live="polite"></p>
+      </section>
+      <div class="create-player-section">
+        <h2>¿Nuevo por aquí?</h2>
+        <label class="field-label" for="new-player-name">CREA TU PERFIL</label>
+        <div class="create-player-row">
+          <input id="new-player-name" maxlength="30" autocomplete="off" placeholder="Nombre del jugador">
+          <button id="create-player" type="button">Crear y jugar</button>
+        </div>
+      </div>
+      <p id="menu-message" role="status" aria-live="polite"></p>
+    </section>
+    <div id="game-controls" class="game-controls" hidden>
+      <span id="game-message" role="status" aria-live="polite"></span>
+      <button id="abandon-level" type="button">Abandonar nivel</button>
+      <button id="return-menu" type="button" hidden>Volver a jugadores</button>
+    </div>
+
+    <script src="controller-01.js"></script>
+    <script src="display-01.js"></script>
+    <script src="engine-01.js"></script>
+    <script src="game-01.js"></script>
+    <script src="main-01.js"></script>
+  </body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "Juego",
+  "version": "1.0.0",
+  "description": "Videojuego Platformer con Node.js y SQLite",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node --watch server/server.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "better-sqlite3": "^12.2.0"
+  },
+  "allowScripts": {
+    "better-sqlite3@12.11.1": true
+  }
+}
